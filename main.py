@@ -1,9 +1,14 @@
 from flask import Flask, request, jsonify, redirect, url_for
 from flask_cors import CORS
 from textblob import TextBlob
-import spacy
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
 
-nlp = spacy.load("en_core_web_sm")
+nltk.download("punkt", quiet=True)
+nltk.download("punkt_tab", quiet=True)
+nltk.download("stopwords", quiet=True)
+nltk.download("averaged_perceptron_tagger_eng", quiet=True)
 
 app = Flask(__name__)
 CORS(app)
@@ -40,8 +45,12 @@ def analyze():
     else:
         sentiment = "Neutral"
 
-    doc = nlp(text)
-    keywords = list({token.lemma_ for token in doc if token.pos_ in ("NOUN", "PROPN", "VERB") and not token.is_stop})
+    tokens = word_tokenize(text)
+    stop_words = set(stopwords.words("english"))
+    tagged = nltk.pos_tag(tokens)
+    # Keep nouns (NN*) and verbs (VB*), filter stopwords
+    keywords = list({word for word, tag in tagged
+                     if tag.startswith(("NN", "VB")) and word.lower() not in stop_words and word.isalpha()})
 
     return jsonify({"sentiment": sentiment, "polarity": round(polarity, 4), "keywords": keywords})
 
