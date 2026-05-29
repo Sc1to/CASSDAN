@@ -1,11 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, url_for
 
 app = Flask(__name__)
 
 
 @app.route("/")
 def home():
-     return jsonify({"result": "Welcome"})
+    return redirect(url_for("add", **request.args))
 
 
 @app.route("/add")
