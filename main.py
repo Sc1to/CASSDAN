@@ -30,7 +30,7 @@ def add():
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
-    data = request.get_json()
+    data = request.get_json(force=True, silent=True)
     if not data or "text" not in data:
         return jsonify({"error": "JSON body with field 'text' is required"}), 400
 
