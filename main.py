@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify, redirect, url_for
+from flask_cors import CORS
 from textblob import TextBlob
 import spacy
 
 nlp = spacy.load("en_core_web_sm")
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/")
