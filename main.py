@@ -31,10 +31,9 @@ def add():
 @app.route("/analyze", methods=["POST"])
 def analyze():
     data = request.get_json(force=True, silent=True)
-    if not data or "text" not in data:
+    text = data.get("text") or data.get("TEXT_WERT") if data else None
+    if not text:
         return jsonify({"error": "JSON body with field 'text' is required"}), 400
-
-    text = data["text"]
 
     polarity = TextBlob(text).sentiment.polarity
 
